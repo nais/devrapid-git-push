@@ -39,6 +39,8 @@ fun Route.gitPushRoutes() {
         val payload = call.receiveText()
         val headers = call.request.headers
         LOGGER.info(headers.toString())
+        LOGGER.info("PAYLOAD:")
+        LOGGER.info(payload)
         val signature = headers["X-Hub-Signature-256"]
         if (verifyPayload(payload, signature)) {
             call.respond(HttpStatusCode.OK)
