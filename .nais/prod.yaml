@@ -1,2 +1,2 @@
 ingresses:
-  - "https://devrapid-git-push.prod-gcp.nais.io"
+  - "https://devrapid.nais.io/github/"
