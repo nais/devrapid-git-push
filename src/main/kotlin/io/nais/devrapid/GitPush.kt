@@ -15,17 +15,9 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.nais.cost.gitPushRoutes
-import io.nais.cost.nais
 import io.prometheus.client.CollectorRegistry
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
-import java.time.Duration
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.*
-import kotlin.concurrent.fixedRateTimer
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 
