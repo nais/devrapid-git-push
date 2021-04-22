@@ -33,9 +33,9 @@ fun Route.gitPushRoutes() {
     }
 
     post("github/webhook/push") {
-        LOGGER.info(call.receiveText())
+        val payload = call.receiveText()
         val signature = call.request.headers["HTTP_X_HUB_SIGNATURE_256"]
-        if (verifyPayload(call.receiveText(), signature)) {
+        if (verifyPayload(payload, signature)) {
             call.respond(HttpStatusCode.OK)
             LOGGER.info("signature verified")
         } else {
