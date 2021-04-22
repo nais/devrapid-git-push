@@ -11,6 +11,7 @@ import io.prometheus.client.exporter.common.TextFormat
 import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
+import kotlin.text.Charsets.UTF_8
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 fun Route.nais() {
@@ -34,7 +35,7 @@ fun Route.gitPushRoutes() {
     }
 
     post("github/webhook/push") {
-        val payload = String(call.receive(), Charsets.UTF_8)
+        val payload = String(call.receive(), UTF_8)
         LOGGER.info(payload)
         if (verifyPayload(
                 key = Configuration().ghWebhookSecret,
@@ -51,4 +52,4 @@ fun Route.gitPushRoutes() {
 }
 
 fun verifyPayload(key: String, payload: String, signature: String?) =
-    signature == "sha256=" + HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(payload)
+    signature == "sha256=${HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(payload)}"
