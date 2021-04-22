@@ -8,7 +8,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
@@ -33,16 +32,15 @@ fun Route.gitPushRoutes() {
     get("github/webhook/push") {
         call.respondText("ok")
     }
-//  signature = 'sha256=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), ENV['SECRET_TOKEN'], payload_body)
 
     post("github/webhook/push") {
-        val payload = call.receiveText()
-        val headers = call.request.headers
-        LOGGER.info(headers.toString())
-        LOGGER.info("PAYLOAD:")
+        val payload = String(call.receive(), Charsets.UTF_8)
         LOGGER.info(payload)
-        val signature = headers["X-Hub-Signature-256"]
-        if (verifyPayload(payload, signature)) {
+        if (verifyPayload(
+                key = Configuration().ghWebhookSecret,
+                payload = payload,
+                signature = call.request.headers["X-Hub-Signature-256"]
+            )) {
             call.respond(HttpStatusCode.OK)
             LOGGER.info("signature verified")
         } else {
@@ -50,12 +48,7 @@ fun Route.gitPushRoutes() {
             LOGGER.info("signature not verified")
         }
     }
-
 }
 
-fun verifyPayload(payload: String, signature: String?): Boolean {
-    val calculatedSignature = "sha256=" + HmacUtils(HmacAlgorithms.HMAC_SHA_256, "superhemmelig").hmacHex(payload)
-    LOGGER.info("Signature: $signature")
-    LOGGER.info("Calculated signature: $calculatedSignature")
-    return calculatedSignature == signature
-}
+fun verifyPayload(key: String, payload: String, signature: String?) =
+    signature == "sha256=" + HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(payload)
