@@ -9,6 +9,8 @@ import io.ktor.routing.*
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import org.apache.commons.codec.digest.DigestUtils
+import org.apache.commons.codec.digest.HmacAlgorithms
+import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
@@ -31,6 +33,7 @@ fun Route.gitPushRoutes() {
     get("github/webhook/push") {
         call.respondText("ok")
     }
+//  signature = 'sha256=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), ENV['SECRET_TOKEN'], payload_body)
 
     post("github/webhook/push") {
         val payload = call.receiveText()
@@ -49,8 +52,8 @@ fun Route.gitPushRoutes() {
 }
 
 fun verifyPayload(payload: String, signature: String?): Boolean {
-    val calculatedSignature = DigestUtils.sha256Hex("superhemmelig" + payload)
+    val calculatedSignature = "sha256=" + HmacUtils(HmacAlgorithms.HMAC_SHA_256, "superhemmelig").hmacHex(payload)
     LOGGER.info("Signature: $signature")
     LOGGER.info("Calculated signature: $calculatedSignature")
-    return calculatedSignature.equals(signature)
+    return calculatedSignature == signature
 }
