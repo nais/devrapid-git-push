@@ -92,5 +92,5 @@ tasks.named<Jar>("jar") {
 }
 
 application {
-    mainClassName = "io.nais.devrapid.AppKt"
+    mainClass.set("io.nais.devrapid.AppKt")
 }
