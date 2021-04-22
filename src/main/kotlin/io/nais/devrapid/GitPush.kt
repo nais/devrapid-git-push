@@ -15,6 +15,7 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.nais.cost.gitPushRoutes
 import io.nais.cost.nais
 import io.prometheus.client.CollectorRegistry
 import org.slf4j.LoggerFactory
@@ -58,7 +59,7 @@ fun Application.gitpush() {
     }
     routing {
         nais()
-        gitpush()
+        gitPushRoutes()
 
     }
 

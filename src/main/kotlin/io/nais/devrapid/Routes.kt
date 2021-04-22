@@ -23,7 +23,7 @@ fun Route.nais() {
     }
 }
 
-fun Route.gitpush() {
+fun Route.gitPushRoutes() {
     get("/gitpush") {
         call.respondText("ok")
     }
