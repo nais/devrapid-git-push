@@ -24,7 +24,7 @@ fun Route.nais() {
 }
 
 fun Route.gitpush() {
-    post("/gitpush") {
+    get("/gitpush") {
         call.respondText("ok")
     }
 
