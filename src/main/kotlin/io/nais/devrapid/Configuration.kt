@@ -11,5 +11,5 @@ private fun config() =
     systemProperties() overriding EnvironmentVariables overriding ConfigurationProperties.fromResource("defaults.properties")
 
 data class Configuration(
-    val ghWebhookSecret: String = config()[Key("GHWEBHOOKSECRET", stringType)],
+    val ghWebhookSecret: String = config()[Key("GHWEBHOOK", stringType)],
     )

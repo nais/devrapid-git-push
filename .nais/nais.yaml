@@ -34,3 +34,5 @@ spec:
     {{#each ingresses as |url|}}
       - {{url}}
     {{/each}}
+  envFrom:
+    - secret: github-webhook
