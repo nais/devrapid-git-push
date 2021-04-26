@@ -12,11 +12,13 @@ import io.prometheus.client.exporter.common.TextFormat
 import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 import kotlin.text.Charsets.UTF_8
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 
-private val pushes = Gauge.build().name("github_pushes").help("pushes recevied from github").labelNames("team", "repository").create()
+private val pushes =
+    Gauge.build().name("github_pushes").help("pushes recevied from github").labelNames("team", "repository").create()
 private val verifyPayload = Gauge.build().name("verified_payloads").help("verified payloads").create()
 private val unverifyPayload = Gauge.build().name("unverified_payloads").help("unveridfied payloads").create()
 
@@ -42,7 +44,7 @@ fun Route.gitPushRoutes() {
 
     post("github/webhook/push") {
         val payload = String(call.receive(), UTF_8)
-        LOGGER.debug(payload)
+        LOGGER.info(payload)
         if (verifyPayload(
                 key = Configuration().ghWebhookSecret,
                 payload = payload,
@@ -54,13 +56,22 @@ fun Route.gitPushRoutes() {
             verifyPayload.inc()
         } else {
             call.respond(HttpStatusCode.Forbidden)
+            val pushdata = extractPushdata(payload)
             LOGGER.debug("signature not verified")
             unverifyPayload.inc()
         }
     }.also {
         pushes.labels("nais-analyse", "aiven-cost").inc()
     }
+
 }
 
-    fun verifyPayload(key: String, payload: String, signature: String?) =
-        signature == "sha256=${HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(payload)}"
+fun extractPushdata(payload: String): Any {
+    return Pushdata("", "", LocalDateTime.now())
+}
+
+data class Pushdata(val repo: String, val sha: String, val timestamp: LocalDateTime)
+
+
+fun verifyPayload(key: String, payload: String, signature: String?) =
+    signature == "sha256=${HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(payload)}"
