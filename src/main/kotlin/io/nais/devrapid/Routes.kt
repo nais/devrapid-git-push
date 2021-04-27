@@ -1,6 +1,8 @@
 package io.nais.devrapid
 
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -13,6 +15,7 @@ import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.text.Charsets.UTF_8
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
@@ -67,10 +70,12 @@ fun Route.gitPushRoutes() {
 }
 
 fun extractPushdata(payload: String): Any {
-    return Pushdata("", "", LocalDateTime.now())
+    val mapper = ObjectMapper()
+    val node: JsonNode = mapper.readTree(payload)
+    val latestCommitSha = node.at("/head_commit/id").toString()
+    val latestCommit = LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(node.at("/head_commit/timestamp").toString()))
+    return PushData(latestCommitSha, latestCommit, LocalDateTime.now())
 }
-
-data class Pushdata(val repo: String, val sha: String, val timestamp: LocalDateTime)
 
 
 fun verifyPayload(key: String, payload: String, signature: String?) =

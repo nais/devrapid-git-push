@@ -47,6 +47,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.0")
     implementation("commons-codec:commons-codec:1.15")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
