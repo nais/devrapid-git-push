@@ -2,6 +2,7 @@ package io.nais.devrapid
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -20,7 +21,7 @@ class PushData(
                         node.at("/head_commit/timestamp").asText()
                     )
                 ),
-                webHookRecieved = ZonedDateTime.now()
+                webHookRecieved = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
             )
         }
     }
