@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 internal class ExtractPayloadTest {
 
     @Test
-    internal fun `happy case`() {
+    fun `happy case`() {
         val payload = File("src/test/resources/payload-webcommit.json").readText()
         val pushdata = PushData.from(payload)
         assertThat(pushdata.latestCommit.toString()).isEqualTo("2021-04-26T10:52:34+02:00")

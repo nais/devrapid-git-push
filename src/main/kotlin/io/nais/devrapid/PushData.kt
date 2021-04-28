@@ -11,7 +11,7 @@ class PushData(
     val latestCommit: ZonedDateTime,
     val webHookRecieved: ZonedDateTime
 ) {
-    companion object FromPushData {
+    companion object FromPayload {
         fun from(payload: String): PushData {
             val node: JsonNode = ObjectMapper().readTree(payload)
             return PushData(
