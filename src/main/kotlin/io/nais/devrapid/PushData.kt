@@ -2,6 +2,7 @@ package io.nais.devrapid
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.protobuf.Timestamp
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -11,8 +12,8 @@ class PushData(
     val latestCommit: ZonedDateTime,
     val webHookRecieved: ZonedDateTime
 ) {
-    companion object FromPayload {
-        fun from(payload: String): PushData {
+    companion object Converter {
+        fun fromJson(payload: String): PushData {
             val node: JsonNode = ObjectMapper().readTree(payload)
             return PushData(
                 latestCommitSha = node.at("/head_commit/id").asText(),
@@ -24,5 +25,16 @@ class PushData(
                 webHookRecieved = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
             )
         }
+
+        fun toProtoBuf(data: PushData): Message.Pushdata {
+
+            val toBuilder = Message.Pushdata.getDefaultInstance().toBuilder()
+            val latesCommit = Timestamp.newBuilder().setSeconds(data.latestCommit.toEpochSecond()).build()
+            val webHoocReceived = Timestamp.newBuilder().setSeconds(data.webHookRecieved.toEpochSecond()).build()
+            return toBuilder.setLatestCommitSha(data.latestCommitSha).setLatestCommit(latesCommit)
+                .setWebHookRecieved(webHoocReceived).build()
+        }
+
     }
+
 }

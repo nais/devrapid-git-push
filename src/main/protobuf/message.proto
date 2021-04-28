@@ -1,9 +1,7 @@
 syntax = "proto3";
+package io.nais.devrapid;
 
 import "google/protobuf/timestamp.proto";
-
-option java_package = "io.nais.devrapid.";
-
 
 message Pushdata {
   string latestCommitSha = 1;

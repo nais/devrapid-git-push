@@ -1,10 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 
 plugins {
     kotlin("jvm") version ("1.4.32")
     kotlin("plugin.serialization") version "1.4.32"
+    id("com.google.protobuf") version "0.8.16"
     application
 }
+
+apply(plugin = "com.google.protobuf")
+
 
 repositories {
     jcenter()
@@ -25,6 +31,8 @@ val assertJVersion = "3.18.1"
 val prometheusVersion = "0.9.0"
 val micrometerVersion = "1.5.2"
 val serializerVersion = "0.20.0"
+val protobufVersion = "3.6.1"
+
 
 
 dependencies {
@@ -48,6 +56,8 @@ dependencies {
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.0")
     implementation("commons-codec:commons-codec:1.15")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
+    compile("com.google.protobuf:protobuf-java:$protobufVersion")
+    protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
@@ -63,6 +73,28 @@ java {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlinx.serialization.UnstableDefault,io.ktor.util.KtorExperimentalAPI"
+}
+
+
+
+java {
+    val mainJavaSourceSet: SourceDirectorySet = sourceSets.getByName("main").java
+    val protoSrcDir = "$buildDir/generated/source/proto/main"
+    mainJavaSourceSet.srcDirs("$protoSrcDir/java", "$protoSrcDir/grpc", "$protoSrcDir/grpckotlin")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protobufVersion"
+    }
+}
+
+sourceSets{
+    create("proto"){
+        proto {
+            srcDir("src/main/protobuf/")
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -93,6 +125,7 @@ tasks.named<Jar>("jar") {
         }
     }
 }
+
 
 application {
     mainClass.set("io.nais.devrapid.App")
