@@ -1,8 +1,6 @@
 package io.nais.devrapid
 
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -14,16 +12,12 @@ import io.prometheus.client.exporter.common.TextFormat
 import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.text.Charsets.UTF_8
 
 private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 
-private val pushes =
-    Gauge.build().name("github_pushes").help("pushes recevied from github").labelNames("team", "repository").create()
-private val verifyPayload = Gauge.build().name("verified_payloads").help("verified payloads").create()
-private val unverifyPayload = Gauge.build().name("unverified_payloads").help("unveridfied payloads").create()
+private val verifiedPayloads = Gauge.build().name("verified_payloads").help("verified payloads").create()
+private val unverifiedPayloads = Gauge.build().name("unverified_payloads").help("unverified payloads").create()
 
 fun Route.nais() {
     get("/internal/isalive") {
@@ -41,40 +35,26 @@ fun Route.nais() {
 }
 
 fun Route.gitPushRoutes() {
-    get("github/webhook/push") {
-        call.respondText("ok")
-    }
-
     post("github/webhook/push") {
         val payload = String(call.receive(), UTF_8)
-        LOGGER.info(payload)
+        LOGGER.debug(payload)
         if (verifyPayload(
                 key = Configuration().ghWebhookSecret,
                 payload = payload,
                 signature = call.request.headers["X-Hub-Signature-256"]
             )
         ) {
-            call.respond(HttpStatusCode.OK)
             LOGGER.debug("signature verified")
-            verifyPayload.inc()
+            verifiedPayloads.inc()
+            PushData.from(payload)
+            call.respond(HttpStatusCode.OK)
         } else {
-            call.respond(HttpStatusCode.Forbidden)
-            val pushdata = extractPushdata(payload)
             LOGGER.debug("signature not verified")
-            unverifyPayload.inc()
+            unverifiedPayloads.inc()
+            call.respond(HttpStatusCode.Forbidden)
         }
-    }.also {
-        pushes.labels("nais-analyse", "aiven-cost").inc()
     }
 
-}
-
-fun extractPushdata(payload: String): Any {
-    val mapper = ObjectMapper()
-    val node: JsonNode = mapper.readTree(payload)
-    val latestCommitSha = node.at("/head_commit/id").toString()
-    val latestCommit = LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(node.at("/head_commit/timestamp").toString()))
-    return PushData(latestCommitSha, latestCommit, LocalDateTime.now())
 }
 
 
