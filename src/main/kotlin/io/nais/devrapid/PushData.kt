@@ -28,11 +28,14 @@ class PushData(
 
         fun toProtoBuf(data: PushData): Message.Pushdata {
 
-            val toBuilder = Message.Pushdata.getDefaultInstance().toBuilder()
-            val latesCommit = Timestamp.newBuilder().setSeconds(data.latestCommit.toEpochSecond()).build()
-            val webHoocReceived = Timestamp.newBuilder().setSeconds(data.webHookRecieved.toEpochSecond()).build()
-            return toBuilder.setLatestCommitSha(data.latestCommitSha).setLatestCommit(latesCommit)
-                .setWebHookRecieved(webHoocReceived).build()
+            val builder = Message.Pushdata.getDefaultInstance().toBuilder()
+            val latestCommit = Timestamp.newBuilder().setSeconds(data.latestCommit.toEpochSecond()).build()
+            val webHookRecieved = Timestamp.newBuilder().setSeconds(data.webHookRecieved.toEpochSecond()).build()
+            return builder
+                .setLatestCommitSha(data.latestCommitSha)
+                .setLatestCommit(latestCommit)
+                .setWebHookRecieved(webHookRecieved)
+                .build()
         }
 
     }
