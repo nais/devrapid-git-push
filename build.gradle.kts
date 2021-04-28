@@ -53,7 +53,6 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
-    implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.0")
     implementation("commons-codec:commons-codec:1.15")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     compile("com.google.protobuf:protobuf-java:$protobufVersion")

@@ -1,7 +1,7 @@
 package io.nais.devrapid
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
