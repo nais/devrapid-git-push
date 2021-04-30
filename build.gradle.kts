@@ -15,6 +15,7 @@ apply(plugin = "com.google.protobuf")
 repositories {
     jcenter()
     maven("https://jitpack.io")
+    maven("https://packages.confluent.io/maven/")
     mavenCentral()
 }
 
@@ -56,6 +57,7 @@ dependencies {
     implementation("commons-codec:commons-codec:1.15")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     implementation("org.apache.kafka:kafka-clients:2.8.0")
+    implementation("io.confluent:kafka-protobuf-serializer:6.1.1")
     compile("com.google.protobuf:protobuf-java:$protobufVersion")
     protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
