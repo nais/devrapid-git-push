@@ -49,9 +49,9 @@ class PushData(
     fun send () {
         val props = createKafkaConfig()
         val topic = Configuration().topic
-        val record = toProtoBuf()
+        val record = toProtoBuf().toByteArray()
 
-        KafkaProducer<String, Message.Pushdata>(props).use { producer ->
+        KafkaProducer<String, ByteArray>(props).use { producer ->
 
             val key = "alice"
 

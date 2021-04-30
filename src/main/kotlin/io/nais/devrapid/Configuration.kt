@@ -33,7 +33,7 @@ fun createKafkaConfig(): Properties {
     props["ssl.keystore.password"] = config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)]
 //    props["ssl.key.password"] = "secret"
     props["key.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
-    props["value.serializer"] = "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer"
+    props["value.serializer"] = "org.apache.kafka.common.serialization.ByteArraySerializer"
     return props
 }
 
