@@ -46,7 +46,8 @@ fun Route.gitPushRoutes() {
         ) {
             LOGGER.debug("signature verified")
             verifiedPayloads.inc()
-            PushData.fromJson(payload)
+            PushData.fromJson(payload).send()
+
             call.respond(HttpStatusCode.OK)
         } else {
             LOGGER.debug("signature not verified")

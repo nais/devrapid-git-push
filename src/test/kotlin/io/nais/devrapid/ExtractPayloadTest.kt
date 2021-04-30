@@ -22,7 +22,7 @@ internal class ExtractPayloadTest {
 
         val now = ZonedDateTime.now()
         val data = PushData(latestCommit = now, latestCommitSha = "123", webHookRecieved = now)
-        val message = PushData.toProtoBuf(data)
+        val message = data.toProtoBuf()
 
         assertEquals("123", message.latestCommitSha)
         assertEquals(now.toEpochSecond(), message.latestCommit.seconds)
