@@ -36,3 +36,5 @@ spec:
     {{/each}}
   envFrom:
     - secret: github-webhook
+  kafka:
+    pool: nav-prod
