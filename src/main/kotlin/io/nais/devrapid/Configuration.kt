@@ -21,6 +21,9 @@ fun createKafkaConfig(): Properties {
     val props = Properties()
     props["bootstrap.servers"] = config()[Key("KAFKA_BROKERS", stringType)]
     props["security.protocol"] = "SSL"
+    props["schema.registry.url"] = config()[Key("KAFKA_SCHEMA_REGISTRY", stringType)]
+    props["schema.registry.user"] = config()[Key("KAFKA_SCHEMA_REGISTRY_USER", stringType)]
+    props["schema.registry.password"] = config()[Key("KAFKA_SCHEMA_REGISTRY_PASSWORD", stringType)]
     props["ssl.truststore.location"] = config()[Key("KAFKA_TRUSTSTORE_PATH", stringType)]
     props["ssl.truststore.password"] = config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)]
     props["ssl.keystore.type"] = "PKCS12"
