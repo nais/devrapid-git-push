@@ -13,7 +13,7 @@ private fun config() =
 
 data class Configuration(
     val ghWebhookSecret: String = config()[Key("GHWEBHOOK", stringType)],
-    val topic:String = "nais-analyse.devrapid-temp"
+    val topic:String = "aura.dev-rapid-test"
     )
 
 
