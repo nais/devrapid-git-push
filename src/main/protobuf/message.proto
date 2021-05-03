@@ -1,5 +1,5 @@
 syntax = "proto3";
-package io.nais.devrapid;
+package io.nais.devrapid.github;
 
 import "google/protobuf/timestamp.proto";
 
