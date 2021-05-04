@@ -17,11 +17,24 @@ private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 class PushData(
     val latestCommitSha: String,
     val latestCommit: ZonedDateTime,
-    val webHookRecieved: ZonedDateTime
+    val webHookRecieved: ZonedDateTime,
+    val ref: String,
+    val masterBranch: String,
+    val programmingLanguage: String,
+    val repositoryName: String,
+    val privateRepo: Boolean,
+    val organizationName: String,
+    val filesDeleted: Int,
+    val filesAdded: Int,
+    val filesModified: Int
+    val commitMessages: List<String>,
+    val noOfCoAuthors: Int
+
 ) {
     companion object Converter {
         fun fromJson(payload: String): PushData {
             val node: JsonNode = ObjectMapper().readTree(payload)
+            val commitMessages = node.at("/commits").messages()
             return PushData(
                 latestCommitSha = node.at("/head_commit/id").asText(),
                 latestCommit = ZonedDateTime.from(
@@ -29,12 +42,29 @@ class PushData(
                         node.at("/head_commit/timestamp").asText()
                     )
                 ),
-                webHookRecieved = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+                webHookRecieved = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                ref = node.at("/ref").asText(),
+                masterBranch = node.at("/repository/master_branch").asText(),
+                programmingLanguage = node.at("/repository/language").asText(),
+                repositoryName = node.at("/repository/name").asText(),
+                privateRepo = node.at("/organization/private").asBoolean(),
+                organizationName = node.at("/repository/organization").asText(),
+                filesDeleted = node.at("/commits").count("/removed"),
+                filesAdded = node.at("/commits").count("/added"),
+                filesModified = node.at("/commits").count("/modified"),
+                commitMessages = commitMessages,
+                noOfCoAuthors = commitMessages.filter { it.toLowerCase().contains("co-authored-by") }.count()
+
             )
         }
 
+        private fun JsonNode.count(operation: String): Int =
+            this.asIterable().map { node -> node.at(operation).asIterable().count() }.sum()
 
+        private fun JsonNode.messages(): List<String> =
+            this.asIterable().map { node -> node.at("/messages").asText() }
     }
+
     internal fun toProtoBuf(): Message.Pushdata {
 
         val builder = Message.Pushdata.getDefaultInstance().toBuilder()
@@ -47,7 +77,7 @@ class PushData(
             .build()
     }
 
-    fun send () {
+    fun send() {
         val props = createKafkaConfig()
         val topic = Configuration().topic
         val record = toProtoBuf().toByteArray()
@@ -70,5 +100,6 @@ class PushData(
             producer.flush()
         }
     }
+
 
 }

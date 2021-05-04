@@ -15,13 +15,34 @@ internal class ExtractPayloadTest {
         assertThat(pushdata.latestCommit.toString()).isEqualTo("2021-04-26T10:52:34+02:00")
         assertThat(pushdata.latestCommitSha).isEqualTo("a13e3ca15abdb51c9c22f11fedb79a0df460cbab")
         assertThat(pushdata.webHookRecieved).isBefore(ZonedDateTime.now())
+        assertThat(pushdata.filesAdded).isEqualTo(2)
+        assertThat(pushdata.filesDeleted).isEqualTo(0)
+        assertThat(pushdata.filesModified).isEqualTo(2)
+        assertThat(pushdata.ref).isEqualTo("refs/heads/main")
+        assertThat(pushdata.masterBranch).isEqualTo("main")
+        assertThat(pushdata.programmingLanguage).isEqualTo("Kotlin")
+        assertThat(pushdata.privateRepo).isFalse()
+        assertThat(pushdata.organizationName).isEqualTo("navikt")
     }
 
     @Test
     fun `to protobuf`() {
 
         val now = ZonedDateTime.now()
-        val data = PushData(latestCommit = now, latestCommitSha = "123", webHookRecieved = now)
+        val data = PushData(
+            latestCommit = now,
+            latestCommitSha = "123",
+            webHookRecieved = now,
+            ref = "ref",
+            masterBranch = "main",
+            programmingLanguage = "kotlin",
+            repositoryName = "reponame",
+            privateRepo = false,
+            organizationName = "nav",
+            filesDeleted = 0,
+            filesModified = 0,
+            filesAdded = 0
+        )
         val message = data.toProtoBuf()
 
         assertEquals("123", message.latestCommitSha)

@@ -183,6 +183,34 @@
       "modified":[
         "README.md"
       ]
+    },
+    {
+      "id":"a13e3ca15abdb51c9c22f11fedb79a0df460cbaf",
+      "tree_id":"8cd10678af5bb9ce790e6ad502b93c782fbce17t",
+      "distinct":true,
+      "message":"Update README.md again",
+      "timestamp":"2021-04-26T10:52:34+02:00",
+      "url":"https://github.com/navikt/aiven-cost/commit/a13e3ca15abdb51c9c22f11fedb79a0df460cbab",
+      "author":{
+        "name":"Audun Fauchald Strand",
+        "email":"audun.fauchald.strand@nav.no",
+        "username":"audunstrand"
+      },
+      "committer":{
+        "name":"GitHub",
+        "email":"noreply@github.com",
+        "username":"web-flow"
+      },
+      "added":[
+        "README.md",
+        "nais.yaml"
+      ],
+      "removed":[
+
+      ],
+      "modified":[
+        "README2.md"
+      ]
     }
   ],
   "head_commit":{
