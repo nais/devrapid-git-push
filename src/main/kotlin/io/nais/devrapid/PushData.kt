@@ -26,9 +26,9 @@ class PushData(
     val organizationName: String,
     val filesDeleted: Int,
     val filesAdded: Int,
-    val filesModified: Int
+    val filesModified: Int,
     val commitMessages: List<String>,
-    val noOfCoAuthors: Int
+    val coAuthors: Int
 
 ) {
     companion object Converter {
@@ -53,7 +53,7 @@ class PushData(
                 filesAdded = node.at("/commits").count("/added"),
                 filesModified = node.at("/commits").count("/modified"),
                 commitMessages = commitMessages,
-                noOfCoAuthors = commitMessages.filter { it.toLowerCase().contains("co-authored-by") }.count()
+                coAuthors = commitMessages.filter { it.toLowerCase().contains("co-authored-by") }.count()
 
             )
         }
@@ -62,7 +62,7 @@ class PushData(
             this.asIterable().map { node -> node.at(operation).asIterable().count() }.sum()
 
         private fun JsonNode.messages(): List<String> =
-            this.asIterable().map { node -> node.at("/messages").asText() }
+            this.asIterable().map { node -> node.at("/message").asText() }
     }
 
     internal fun toProtoBuf(): Message.Pushdata {

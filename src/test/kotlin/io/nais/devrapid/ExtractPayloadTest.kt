@@ -23,6 +23,9 @@ internal class ExtractPayloadTest {
         assertThat(pushdata.programmingLanguage).isEqualTo("Kotlin")
         assertThat(pushdata.privateRepo).isFalse()
         assertThat(pushdata.organizationName).isEqualTo("navikt")
+        assertThat(pushdata.commitMessages).isEqualTo(listOf("Update README.md", "Update README.md again Co-authored-by julenissen"))
+        assertThat(pushdata.coAuthors).isEqualTo(1)
+
     }
 
     @Test
@@ -41,7 +44,9 @@ internal class ExtractPayloadTest {
             organizationName = "nav",
             filesDeleted = 0,
             filesModified = 0,
-            filesAdded = 0
+            filesAdded = 0,
+            commitMessages = listOf("commmit"),
+            coAuthors = 0
         )
         val message = data.toProtoBuf()
 
