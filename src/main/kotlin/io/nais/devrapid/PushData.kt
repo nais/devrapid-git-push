@@ -70,10 +70,22 @@ class PushData(
         val builder = Message.Pushdata.getDefaultInstance().toBuilder()
         val latestCommit = Timestamp.newBuilder().setSeconds(latestCommit.toEpochSecond()).build()
         val webHookRecieved = Timestamp.newBuilder().setSeconds(webHookRecieved.toEpochSecond()).build()
+
         return builder
             .setLatestCommitSha(latestCommitSha)
             .setLatestCommit(latestCommit)
             .setWebHookRecieved(webHookRecieved)
+            .setRef(ref)
+            .setMasterBranch(masterBranch)
+            .setProgrammingLanguage(programmingLanguage)
+            .setRepositoryName(repositoryName)
+            .setPrivateRepo(privateRepo)
+            .setOrganizationName(organizationName)
+            .setFilesAdded(filesAdded)
+            .setFilesDeleted(filesDeleted)
+            .setFilesModified(filesModified)
+            .addAllCommitMessages(commitMessages)
+            .setCoAuthors(coAuthors)
             .build()
     }
 

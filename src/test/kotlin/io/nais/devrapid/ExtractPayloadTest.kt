@@ -20,6 +20,7 @@ internal class ExtractPayloadTest {
         assertThat(pushdata.filesModified).isEqualTo(2)
         assertThat(pushdata.ref).isEqualTo("refs/heads/main")
         assertThat(pushdata.masterBranch).isEqualTo("main")
+        assertThat(pushdata.repositoryName).isEqualTo("aiven-cost")
         assertThat(pushdata.programmingLanguage).isEqualTo("Kotlin")
         assertThat(pushdata.privateRepo).isFalse()
         assertThat(pushdata.organizationName).isEqualTo("navikt")
@@ -42,16 +43,18 @@ internal class ExtractPayloadTest {
             repositoryName = "reponame",
             privateRepo = false,
             organizationName = "nav",
-            filesDeleted = 0,
-            filesModified = 0,
-            filesAdded = 0,
-            commitMessages = listOf("commmit"),
-            coAuthors = 0
+            filesDeleted = 3,
+            filesModified = 4,
+            filesAdded = 5,
+            commitMessages = listOf("commmit", "commit2"),
+            coAuthors = 2
         )
         val message = data.toProtoBuf()
 
         assertEquals("123", message.latestCommitSha)
         assertEquals(now.toEpochSecond(), message.latestCommit.seconds)
+        assertEquals(2, data.commitMessages.size)
+
 
     }
 
