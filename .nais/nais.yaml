@@ -34,7 +34,7 @@ spec:
     {{#each ingresses as |url|}}
       - {{url}}
     {{/each}}
-  envFrom:im
+  envFrom:
     - secret: github-webhook
   kafka:
     pool: nav-infrastructure
