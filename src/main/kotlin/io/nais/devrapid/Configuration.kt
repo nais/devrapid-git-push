@@ -13,7 +13,7 @@ private fun config() =
 
 data class Configuration(
     val ghWebhookSecret: String = config()[Key("GHWEBHOOK", stringType)],
-    val topic:String = "aura.dev-rapid-test"
+    val topic:String = "aura.dev-rapid"
     )
 
 
@@ -31,7 +31,6 @@ fun createKafkaConfig(): Properties {
     props["ssl.keystore.type"] = "PKCS12"
     props["ssl.keystore.location"] = config()[Key("KAFKA_KEYSTORE_PATH", stringType)]
     props["ssl.keystore.password"] = config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)]
-//    props["ssl.key.password"] = "secret"
     props["key.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
     props["value.serializer"] = "org.apache.kafka.common.serialization.ByteArraySerializer"
     return props
