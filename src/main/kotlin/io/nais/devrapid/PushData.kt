@@ -3,11 +3,11 @@ package io.nais.devrapid
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.Timestamp
+import io.nais.devrapid.github.Message
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
-import io.nais.devrapid.github.Message
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -65,9 +65,9 @@ class PushData(
             this.asIterable().map { node -> node.at("/message").asText() }
     }
 
-    internal fun toProtoBuf(): Message.Pushdata {
+    internal fun toProtoBuf(): Message.Push {
 
-        val builder = Message.Pushdata.getDefaultInstance().toBuilder()
+        val builder = Message.Push.getDefaultInstance().toBuilder()
         val latestCommit = Timestamp.newBuilder().setSeconds(latestCommit.toEpochSecond()).build()
         val webHookRecieved = Timestamp.newBuilder().setSeconds(webHookRecieved.toEpochSecond()).build()
 
