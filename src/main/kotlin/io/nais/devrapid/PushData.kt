@@ -3,6 +3,7 @@ package io.nais.devrapid
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.Timestamp
+import com.google.protobuf.Any
 import io.nais.devrapid.github.Message
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -92,7 +93,7 @@ class PushData(
     fun send() {
         val props = createKafkaConfig()
         val topic = Configuration().topic
-        val record = toProtoBuf().toByteArray()
+        val record = Any.pack(toProtoBuf()).toByteArray()
 
         KafkaProducer<String, ByteArray>(props).use { producer ->
 
