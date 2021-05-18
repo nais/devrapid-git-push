@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-internal class ExtractPayloadTest {
+internal class PushDataTest {
 
     @Test
     fun `happy case`() {
@@ -54,8 +56,44 @@ internal class ExtractPayloadTest {
         assertEquals("123", message.latestCommitSha)
         assertEquals(now.toEpochSecond(), message.latestCommit.seconds)
         assertEquals(2, data.commitMessages.size)
-
-
     }
 
+    @Test
+    fun `detect push on master`(){
+        val now = ZonedDateTime.now()
+        val pushDataOnMaster = PushData(
+            latestCommit = now,
+            latestCommitSha = "123",
+            webHookRecieved = now,
+            ref = "refs/heads/main",
+            masterBranch = "main",
+            programmingLanguage = "kotlin",
+            repositoryName = "reponame",
+            privateRepo = false,
+            organizationName = "nav",
+            filesDeleted = 3,
+            filesModified = 4,
+            filesAdded = 5,
+            commitMessages = listOf("commmit", "commit2"),
+            coAuthors = 2
+        )
+        val pushDataOnBranch = PushData(
+            latestCommit = now,
+            latestCommitSha = "123",
+            webHookRecieved = now,
+            ref = "refs/heads/featurebranch",
+            masterBranch = "main",
+            programmingLanguage = "kotlin",
+            repositoryName = "reponame",
+            privateRepo = false,
+            organizationName = "nav",
+            filesDeleted = 3,
+            filesModified = 4,
+            filesAdded = 5,
+            commitMessages = listOf("commmit", "commit2"),
+            coAuthors = 2
+        )
+        assertTrue(pushDataOnMaster.pushOnMaster())
+        assertFalse(pushDataOnBranch.pushOnMaster())
+    }
 }

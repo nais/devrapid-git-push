@@ -46,7 +46,8 @@ fun Route.gitPushRoutes() {
         ) {
             LOGGER.debug("signature verified")
             verifiedPayloads.inc()
-            PushData.fromJson(payload).send()
+            val pushData = PushData.fromJson(payload)
+            if (pushData.pushOnMaster()) { pushData.send()}
 
             call.respond(HttpStatusCode.OK)
         } else {

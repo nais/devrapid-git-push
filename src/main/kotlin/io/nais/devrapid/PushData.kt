@@ -114,5 +114,9 @@ class PushData(
         }
     }
 
+    fun pushOnMaster(): Boolean {
+        return ref.substringAfterLast("/") == masterBranch
+    }
+
 
 }
