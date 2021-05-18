@@ -4,8 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal class PushDataTest {
@@ -26,7 +28,12 @@ internal class PushDataTest {
         assertThat(pushdata.programmingLanguage).isEqualTo("Kotlin")
         assertThat(pushdata.privateRepo).isFalse()
         assertThat(pushdata.organizationName).isEqualTo("navikt")
-        assertThat(pushdata.commitMessages).isEqualTo(listOf("Update README.md", "Update README.md again Co-authored-by julenissen"))
+        assertThat(pushdata.commitMessages).isEqualTo(
+            listOf(
+                "Update README.md",
+                "Update README.md again Co-authored-by julenissen"
+            )
+        )
         assertThat(pushdata.coAuthors).isEqualTo(1)
 
     }
@@ -38,6 +45,7 @@ internal class PushDataTest {
         val data = PushData(
             latestCommit = now,
             latestCommitSha = "123",
+            firstBranchCommit = null,
             webHookRecieved = now,
             ref = "ref",
             masterBranch = "main",
@@ -59,11 +67,12 @@ internal class PushDataTest {
     }
 
     @Test
-    fun `detect push on master`(){
+    fun `detect push on master`() {
         val now = ZonedDateTime.now()
         val pushDataOnMaster = PushData(
             latestCommit = now,
             latestCommitSha = "123",
+            firstBranchCommit = null,
             webHookRecieved = now,
             ref = "refs/heads/main",
             masterBranch = "main",
@@ -80,6 +89,7 @@ internal class PushDataTest {
         val pushDataOnBranch = PushData(
             latestCommit = now,
             latestCommitSha = "123",
+            firstBranchCommit = null,
             webHookRecieved = now,
             ref = "refs/heads/featurebranch",
             masterBranch = "main",
@@ -95,5 +105,25 @@ internal class PushDataTest {
         )
         assertTrue(pushDataOnMaster.pushOnMaster())
         assertFalse(pushDataOnBranch.pushOnMaster())
+    }
+
+    @Test
+    fun `get first commit from branch`() {
+        val payload = File("src/test/resources/payload-pull-request-merge.json").readText()
+        val pushdata = PushData.fromJson(payload)
+        assertEquals(
+            ZonedDateTime.from(
+                DateTimeFormatter.ISO_DATE_TIME.parse(
+                    "2021-05-18T09:57:43+02:00"
+                )
+            ), pushdata.firstBranchCommit
+        )
+    }
+
+    @Test
+    fun `no branch commit when push to master`() {
+        val payload = File("src/test/resources/payload-gitcommit.json").readText()
+        val pushdata = PushData.fromJson(payload)
+        assertNull(pushdata.firstBranchCommit)
     }
 }

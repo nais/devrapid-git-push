@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.Timestamp
 import com.google.protobuf.Any
+import io.nais.devrapid.PushData.Converter.zonedDateTime
 import io.nais.devrapid.github.Message
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -18,6 +19,7 @@ private val LOGGER = LoggerFactory.getLogger("devrapid-git-push")
 class PushData(
     val latestCommitSha: String,
     val latestCommit: ZonedDateTime,
+    val firstBranchCommit: ZonedDateTime?,
     val webHookRecieved: ZonedDateTime,
     val ref: String,
     val masterBranch: String,
@@ -38,11 +40,8 @@ class PushData(
             val commitMessages = node.at("/commits").messages()
             return PushData(
                 latestCommitSha = node.at("/head_commit/id").asText(),
-                latestCommit = ZonedDateTime.from(
-                    DateTimeFormatter.ISO_DATE_TIME.parse(
-                        node.at("/head_commit/timestamp").asText()
-                    )
-                ),
+                latestCommit = node.at("/head_commit/timestamp").zonedDateTime(),
+                firstBranchCommit = node.at("/commits").firstCommitIfBranch(),
                 webHookRecieved = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 ref = node.at("/ref").asText(),
                 masterBranch = node.at("/repository/master_branch").asText(),
@@ -55,7 +54,6 @@ class PushData(
                 filesModified = node.at("/commits").count("/modified"),
                 commitMessages = commitMessages,
                 coAuthors = commitMessages.filter { it.toLowerCase().contains("co-authored-by") }.count()
-
             )
         }
 
@@ -64,6 +62,20 @@ class PushData(
 
         private fun JsonNode.messages(): List<String> =
             this.asIterable().map { node -> node.at("/message").asText() }
+
+        private fun JsonNode.firstCommitIfBranch(): ZonedDateTime? {
+            return if (this.asIterable().count() == 1) {
+                null
+            } else {
+                this.asIterable().first()["timestamp"].zonedDateTime()
+            }
+        }
+
+        private fun JsonNode.zonedDateTime() = ZonedDateTime.from(
+            DateTimeFormatter.ISO_DATE_TIME.parse(
+                this.asText()
+            )
+        )
     }
 
     internal fun toProtoBuf(): Message.Push {
@@ -71,7 +83,9 @@ class PushData(
         val builder = Message.Push.getDefaultInstance().toBuilder()
         val latestCommit = Timestamp.newBuilder().setSeconds(latestCommit.toEpochSecond()).build()
         val webHookRecieved = Timestamp.newBuilder().setSeconds(webHookRecieved.toEpochSecond()).build()
-
+        if (firstBranchCommit != null) {
+            builder.firstBranchCommit = Timestamp.newBuilder().setSeconds(firstBranchCommit.toEpochSecond()).build()
+        }
         return builder
             .setLatestCommitSha(latestCommitSha)
             .setLatestCommit(latestCommit)
