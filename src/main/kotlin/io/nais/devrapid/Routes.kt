@@ -37,7 +37,7 @@ fun Route.nais() {
 fun Route.gitPushRoutes() {
     post("github/webhook/push") {
         val payload = String(call.receive(), UTF_8)
-        LOGGER.debug(payload)
+        LOGGER.info(payload)
         if (verifyPayload(
                 key = Configuration().ghWebhookSecret,
                 payload = payload,
