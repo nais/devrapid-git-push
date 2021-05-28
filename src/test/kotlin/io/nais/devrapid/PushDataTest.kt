@@ -63,7 +63,8 @@ internal class PushDataTest {
 
         assertEquals("123", message.latestCommitSha)
         assertEquals(now.toEpochSecond(), message.latestCommit.seconds)
-        assertEquals(2, data.commitMessages.size)
+        assertEquals(message.coAuthors, data.commitMessages.size)
+        assertFalse(message.hasFirstBranchCommit())
     }
 
     @Test
@@ -126,4 +127,5 @@ internal class PushDataTest {
         val pushdata = PushData.fromJson(payload)
         assertNull(pushdata.firstBranchCommit)
     }
+
 }
