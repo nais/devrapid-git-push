@@ -2,4 +2,11 @@
 
 Collects push events from github and publishes on devrapid.
 
-Uses
+# Getting started
+To build: `./gradlew clean build`
+
+# Contact
+Use issues at GitHub.
+
+## NAV internal
+Contact the #nais team.

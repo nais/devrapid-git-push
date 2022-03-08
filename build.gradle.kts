@@ -3,9 +3,9 @@ import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
 plugins {
-    kotlin("jvm") version ("1.4.32")
-    kotlin("plugin.serialization") version "1.4.32"
-    id("com.google.protobuf") version "0.8.16"
+    kotlin("jvm") version ("1.6.10")
+    kotlin("plugin.serialization") version "1.6.10"
+    id("com.google.protobuf") version "0.8.18"
     application
 }
 
@@ -32,7 +32,7 @@ val assertJVersion = "3.18.1"
 val prometheusVersion = "0.9.0"
 val micrometerVersion = "1.5.2"
 val serializerVersion = "0.20.0"
-val protobufVersion = "3.6.1"
+val protobufVersion = "3.19.4"
 
 
 
@@ -58,7 +58,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     implementation("org.apache.kafka:kafka-clients:2.8.0")
     implementation("io.confluent:kafka-protobuf-serializer:6.1.1")
-    compile("com.google.protobuf:protobuf-java:$protobufVersion")
+    api("com.google.protobuf:protobuf-java:$protobufVersion")
     protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
