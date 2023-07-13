@@ -3,7 +3,7 @@ import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
 plugins {
-    kotlin("jvm") version ("1.6.10")
+    kotlin("jvm") version ("1.9.0")
     kotlin("plugin.serialization") version "1.8.21"
     id("com.google.protobuf") version "0.8.18"
     application
@@ -55,7 +55,7 @@ dependencies {
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("commons-codec:commons-codec:1.15")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5")
     implementation("org.apache.kafka:kafka-clients:2.8.0")
     implementation("io.confluent:kafka-protobuf-serializer:6.1.1")
     api("com.google.protobuf:protobuf-java:$protobufVersion")
