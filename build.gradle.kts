@@ -32,7 +32,7 @@ val assertJVersion = "3.24.2"
 val prometheusVersion = "0.9.0"
 val micrometerVersion = "1.5.2"
 val serializerVersion = "0.20.0"
-val protobufVersion = "3.19.4"
+val protobufVersion = "3.23.4"
 
 
 
@@ -54,7 +54,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
-    implementation("commons-codec:commons-codec:1.15")
+    implementation("commons-codec:commons-codec:1.16.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5")
     implementation("org.apache.kafka:kafka-clients:2.8.0")
     implementation("io.confluent:kafka-protobuf-serializer:6.1.1")
