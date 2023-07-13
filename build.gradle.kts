@@ -37,8 +37,8 @@ val protobufVersion = "3.23.4"
 
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.20")
+    implementation(kotlin("stdlib-jdk8:1.9.0"))
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.4.2")
