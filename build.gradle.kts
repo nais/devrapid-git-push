@@ -78,7 +78,6 @@ tasks.withType<KotlinCompile> {
 }
 
 
-
 java {
     val mainJavaSourceSet: SourceDirectorySet = sourceSets.getByName("main").java
     val protoSrcDir = "$buildDir/generated/source/proto/main"
