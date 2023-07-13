@@ -4,7 +4,7 @@ import com.google.protobuf.gradle.protoc
 
 plugins {
     kotlin("jvm") version ("1.6.10")
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.8.21"
     id("com.google.protobuf") version "0.8.18"
     application
 }
@@ -46,7 +46,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
     implementation("com.vlkan.log4j2:log4j2-logstash-layout-fatjar:0.19")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serializerVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializerVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
