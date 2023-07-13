@@ -27,7 +27,7 @@ configurations {
 
 val junitVersion = "5.9.3"
 val ktorVersion = "1.6.8"
-val log4jVersion = "2.17.0"
+val log4jVersion = "2.20.0"
 val assertJVersion = "3.24.2"
 val prometheusVersion = "0.16.0"
 val micrometerVersion = "1.11.2"
@@ -41,11 +41,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.4.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
-    implementation("com.vlkan.log4j2:log4j2-logstash-layout-fatjar:0.19")
+    implementation("com.vlkan.log4j2:log4j2-logstash-layout-fatjar:0.21.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serializerVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializerVersion")
@@ -56,8 +56,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("commons-codec:commons-codec:1.16.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5")
-    implementation("org.apache.kafka:kafka-clients:2.8.0")
-    implementation("io.confluent:kafka-protobuf-serializer:6.1.1")
+    implementation("org.apache.kafka:kafka-clients:3.5.0")
+    implementation("io.confluent:kafka-protobuf-serializer:7.4.0")
     api("com.google.protobuf:protobuf-java:$protobufVersion")
     protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
