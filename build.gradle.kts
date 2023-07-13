@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.*
 
 plugins {
     kotlin("jvm") version ("1.9.0")
     kotlin("plugin.serialization") version "1.8.21"
-    id("com.google.protobuf") version "0.8.18"
+    id("com.google.protobuf") version "0.9.3"
     application
 }
+
 
 apply(plugin = "com.google.protobuf")
 
@@ -29,8 +29,8 @@ val junitVersion = "5.9.3"
 val ktorVersion = "1.6.8"
 val log4jVersion = "2.17.0"
 val assertJVersion = "3.24.2"
-val prometheusVersion = "0.9.0"
-val micrometerVersion = "1.5.2"
+val prometheusVersion = "0.16.0"
+val micrometerVersion = "1.11.2"
 val serializerVersion = "0.20.0"
 val protobufVersion = "3.23.4"
 
