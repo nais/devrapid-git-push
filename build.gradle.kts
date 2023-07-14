@@ -13,7 +13,6 @@ apply(plugin = "com.google.protobuf")
 
 
 repositories {
-    jcenter()
     maven("https://jitpack.io")
     maven("https://packages.confluent.io/maven/")
     mavenCentral()
@@ -73,7 +72,7 @@ java {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.UnstableDefault,io.ktor.util.KtorExperimentalAPI"
 }
 
