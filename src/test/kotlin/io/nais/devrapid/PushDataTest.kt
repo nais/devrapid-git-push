@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 
 internal class PushDataTest {
 

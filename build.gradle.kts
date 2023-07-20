@@ -3,7 +3,7 @@ import com.google.protobuf.gradle.*
 
 plugins {
     kotlin("jvm") version ("1.9.0")
-    kotlin("plugin.serialization") version "1.8.21"
+    kotlin("plugin.serialization") version "1.9.0"
     id("com.google.protobuf") version "0.9.3"
     application
 }
@@ -56,14 +56,13 @@ dependencies {
     implementation("commons-codec:commons-codec:1.16.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5")
     implementation("org.apache.kafka:kafka-clients:3.5.0")
-    implementation("io.confluent:kafka-protobuf-serializer:7.4.0")
+    implementation("io.confluent:kafka-protobuf-serializer:7.4.1")
     api("com.google.protobuf:protobuf-java:$protobufVersion")
     protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-    testImplementation("io.ktor:ktor-server-test-host:1.5.2")
 
 }
 java {
@@ -73,7 +72,6 @@ java {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.UnstableDefault,io.ktor.util.KtorExperimentalAPI"
 }
 
 
