@@ -4,7 +4,7 @@ import com.google.protobuf.gradle.*
 plugins {
     kotlin("jvm") version ("1.9.0")
     kotlin("plugin.serialization") version "1.9.0"
-    id("com.google.protobuf") version "0.9.3"
+    id("com.google.protobuf") version "0.9.4"
     application
 }
 
