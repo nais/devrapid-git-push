@@ -5,6 +5,9 @@ on:
     branches:
       - "main"
 
+env:
+  BASEIMAGE: "gcr.io/distroless/java17-debian11:nonroot"
+
 jobs:
   build:
     name: "build"
@@ -26,6 +29,14 @@ jobs:
           "java-version": "17"
       - name: "compile and run tests"
         run: "./gradlew build"
+      - name: "Create SBOM"
+        run: ./gradlew cyclonedxBom
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06 # ratchet:sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v2.0.0'
+      - name: Verify distroless base image
+        run: cosign verify --certificate-identity "keyless@distroless.iam.gserviceaccount.com" --certificate-oidc-issuer "https://accounts.google.com" $BASEIMAGE
       - uses: nais/docker-build-push@c1d05d5a796be7b24d59a2e76851acdcdbcaff7a # ratchet:nais/docker-build-push@v0
         id: docker-build-push
         name: Build and push Docker image
@@ -34,6 +45,7 @@ jobs:
           pull: true
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          byosbom: build/reports/bom.json
 
   deployToProd:
     name: "Deploy to prod"

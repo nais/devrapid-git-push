@@ -1,3 +1,4 @@
+import org.cyclonedx.gradle.CycloneDxTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.*
 
@@ -5,9 +6,12 @@ plugins {
     kotlin("jvm") version ("1.9.0")
     kotlin("plugin.serialization") version "1.9.0"
     id("com.google.protobuf") version "0.9.4"
+    id("org.cyclonedx.bom") version "1.7.4"
     application
 }
 
+group = "io.nais"
+version = "generatedlater"
 
 apply(plugin = "com.google.protobuf")
 
@@ -73,10 +77,45 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
+tasks {
+    withType<CycloneDxTask> {
+        setOutputFormat("json")
+        setIncludeLicenseText(false)
+    }
 
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            showExceptions = true
+            showStackTraces = true
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    named<Jar>("jar") {
+        archiveBaseName.set("app")
+
+        manifest {
+            attributes["Main-Class"] = "io.nais.devrapid.AppKt"
+            attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+                it.name
+            }
+        }
+
+        doLast {
+            configurations.runtimeClasspath.get().forEach {
+                val file = File("$buildDir/libs/${it.name}")
+                if (!file.exists())
+                    it.copyTo(file)
+            }
+        }
+    }
+}
 
 java {
     val mainJavaSourceSet: SourceDirectorySet = sourceSets.getByName("main").java
@@ -97,36 +136,6 @@ sourceSets{
         }
     }
 }
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        showExceptions = true
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        events("passed", "skipped", "failed")
-    }
-}
-
-tasks.named<Jar>("jar") {
-    archiveBaseName.set("app")
-
-    manifest {
-        attributes["Main-Class"] = "io.nais.devrapid.AppKt"
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
-    }
-}
-
 
 application {
     mainClass.set("io.nais.devrapid.App")
