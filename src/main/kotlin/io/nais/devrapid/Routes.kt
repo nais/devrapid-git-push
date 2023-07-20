@@ -1,11 +1,11 @@
 package io.nais.devrapid
 
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.Gauge
 import io.prometheus.client.exporter.common.TextFormat
@@ -47,7 +47,7 @@ fun Route.gitPushRoutes() {
             LOGGER.debug("signature verified")
             verifiedPayloads.inc()
             val pushData = PushData.fromJson(payload)
-            if (pushData.pushOnMaster()) { pushData.send()}
+            if (pushData.pushOnMaster()) { pushData.send() }
 
             call.respond(HttpStatusCode.OK)
         } else {
