@@ -98,7 +98,7 @@ tasks {
     }
 
     named<Jar>("jar") {
-        archiveBaseName.set("app")
+        archiveFileName.set("app.jar")
 
         manifest {
             attributes["Main-Class"] = "io.nais.devrapid.AppKt"
