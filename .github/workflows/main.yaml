@@ -23,15 +23,11 @@ jobs:
         with:
           dependency-graph: generate-and-submit
       - uses: "gradle/wrapper-validation-action@8d49e559aae34d3e0eb16cde532684bc9702762b" # ratchet:gradle/wrapper-validation-action@v1
-      - uses: "actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8" # ratchet:actions/cache@v3
-        with:
-          "path": "~/.gradle/caches"
-          "key": "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}"
-          "restore-keys": "${{ runner.os }}-gradle-"
       - uses: "actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2" # ratchet:actions/setup-java@v3
         with:
           "java-version": "17"
           "distribution": "temurin"
+          "cache": "gradle"
       - name: "compile and run tests"
         run: "./gradlew build"
       - name: "Create SBOM"
