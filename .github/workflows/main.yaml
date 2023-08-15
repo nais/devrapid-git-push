@@ -42,15 +42,14 @@ jobs:
           cosign-release: 'v2.0.0'
       - name: Verify distroless base image
         run: cosign verify --certificate-identity "keyless@distroless.iam.gserviceaccount.com" --certificate-oidc-issuer "https://accounts.google.com" $BASEIMAGE
-      - uses: nais/docker-build-push@c1d05d5a796be7b24d59a2e76851acdcdbcaff7a # ratchet:nais/docker-build-push@v0
-        id: docker-build-push
-        name: Build and push Docker image
+      - uses: nais/platform-build-push-sign@main # ratchet:exclude
+        id: build-push-sign
         with:
-          team: nais-analyse
-          pull: true
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          byosbom: build/reports/bom.json
+          name: devrapid-git-push
+          google_service_account: devrapid-git-push
+          workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
+          sbom: build/reports/bom.json
+          multi-platform: true
 
   deployToProd:
     name: "Deploy to prod"
