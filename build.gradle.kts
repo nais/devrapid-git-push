@@ -1,13 +1,17 @@
+import org.cyclonedx.gradle.CycloneDxTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.*
 
 plugins {
     kotlin("jvm") version ("1.9.0")
-    kotlin("plugin.serialization") version "1.8.21"
-    id("com.google.protobuf") version "0.9.3"
+    kotlin("plugin.serialization") version "1.9.0"
+    id("com.google.protobuf") version "0.9.4"
+    id("org.cyclonedx.bom") version "1.7.4"
     application
 }
 
+group = "io.nais"
+version = "generatedlater"
 
 apply(plugin = "com.google.protobuf")
 
@@ -25,7 +29,7 @@ configurations {
 }
 
 val junitVersion = "5.9.3"
-val ktorVersion = "1.6.8"
+val ktorVersion = "2.3.2"
 val log4jVersion = "2.20.0"
 val assertJVersion = "3.24.2"
 val prometheusVersion = "0.16.0"
@@ -39,31 +43,33 @@ dependencies {
     implementation(kotlin("stdlib-jdk8:1.9.0"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
     implementation("com.vlkan.log4j2:log4j2-logstash-layout-fatjar:0.21.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializerVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serializerVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializerVersion")
-    implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
     implementation("io.prometheus:simpleclient:$prometheusVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
-    implementation("io.ktor:ktor-auth:$ktorVersion")
-    implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("commons-codec:commons-codec:1.16.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5")
     implementation("org.apache.kafka:kafka-clients:3.5.0")
-    implementation("io.confluent:kafka-protobuf-serializer:7.4.0")
+    implementation("io.confluent:kafka-protobuf-serializer:7.4.1")
     api("com.google.protobuf:protobuf-java:$protobufVersion")
+    implementation("io.ktor:ktor-server-default-headers:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     protobuf(files("src/main/protobuf/"))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-    testImplementation("io.ktor:ktor-server-test-host:1.5.2")
 
 }
 java {
@@ -71,11 +77,45 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.UnstableDefault,io.ktor.util.KtorExperimentalAPI"
-}
+tasks {
+    withType<CycloneDxTask> {
+        setOutputFormat("json")
+        setIncludeLicenseText(false)
+    }
 
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            showExceptions = true
+            showStackTraces = true
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    named<Jar>("jar") {
+        archiveFileName.set("app.jar")
+
+        manifest {
+            attributes["Main-Class"] = "io.nais.devrapid.AppKt"
+            attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+                it.name
+            }
+        }
+
+        doLast {
+            configurations.runtimeClasspath.get().forEach {
+                val file = File("$buildDir/libs/${it.name}")
+                if (!file.exists())
+                    it.copyTo(file)
+            }
+        }
+    }
+}
 
 java {
     val mainJavaSourceSet: SourceDirectorySet = sourceSets.getByName("main").java
@@ -96,36 +136,6 @@ sourceSets{
         }
     }
 }
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        showExceptions = true
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        events("passed", "skipped", "failed")
-    }
-}
-
-tasks.named<Jar>("jar") {
-    archiveBaseName.set("app")
-
-    manifest {
-        attributes["Main-Class"] = "io.nais.devrapid.AppKt"
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
-    }
-}
-
 
 application {
     mainClass.set("io.nais.devrapid.App")
