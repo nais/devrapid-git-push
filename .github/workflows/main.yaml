@@ -15,6 +15,10 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5" # ratchet:actions/checkout@v2
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165 # ratchet:gradle/gradle-build-action@v2
+        with:
+          dependency-graph: generate-and-submit
       - uses: "gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4" # ratchet:gradle/wrapper-validation-action@v1
       - uses: "actions/cache@8492260343ad570701412c2f464a5877dc76bace" # ratchet:actions/cache@v2
         with:
